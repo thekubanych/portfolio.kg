@@ -5,12 +5,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
 DEBUG = config('DEBUG', default=True, cast=bool)
-
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost,portfolio-kg.onrender.com'
-).split(',')
-
+raw_hosts = config(
+    "ALLOWED_HOSTS",
+    default="127.0.0.1,localhost,portfolio-kg.onrender.com"
+)
+ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 CSRF_TRUSTED_ORIGINS = [
     "https://portfolio-kg.onrender.com",
 ]
@@ -138,3 +137,7 @@ LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Bishkek'
 USE_I18N = True
 USE_TZ = True
+
+# DEBUG ONLY
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
