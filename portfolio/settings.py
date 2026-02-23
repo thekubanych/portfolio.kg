@@ -5,7 +5,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-thekubanych-change-in-prod')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+ALLOWED_HOSTS = ["portfolio-kg.onrender.com", "localhost", "127.0.0.1"]
+
 
 INSTALLED_APPS = [
     'jazzmin',
