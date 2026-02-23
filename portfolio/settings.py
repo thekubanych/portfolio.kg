@@ -5,7 +5,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-thekubanych-change-in-prod')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ["portfolio-kg.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "portfolio-kg.onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://portfolio-kg.onrender.com",
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 
 INSTALLED_APPS = [
