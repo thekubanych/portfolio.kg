@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TheKubanych · Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & VARIABLES
+============================================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #030308;
+  --surface: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.07);
+  --text: #e8e8f0;
+  --muted: #4a4a6a;
+  --accent: #6c47ff;
+  --accent2: #00ffb3;
+  --accent3: #ff3d6b;
+  --glow: rgba(108,71,255,0.25);
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+============================================================ */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--accent2);
+  border-radius: 50%;
+  position: fixed; z-index: 9999;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(108,71,255,0.6);
+  border-radius: 50%;
+  position: fixed; z-index: 9998;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+}
+body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 20px; height: 20px; }
+body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 60px; height: 60px; }
+
+/* ============================================================
+   NOISE OVERLAY
+============================================================ */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9997;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   FIXED NAV
+============================================================ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 60px;
+  height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(24px);
+  background: rgba(3,3,8,0.7);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.nav-menu { display: flex; gap: 40px; list-style: none; }
+.nav-menu a {
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing: 1px;
+  color: var(--muted); text-decoration: none;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-menu a span { color: var(--accent); margin-right: 6px; }
+.nav-menu a:hover { color: var(--text); }
+.nav-menu a.active { color: var(--text); }
+
+/* ============================================================
+   PAGE SECTIONS
+============================================================ */
+section {
+  min-height: 100vh;
+  padding: 120px 80px 80px;
+  position: relative;
+}
+
+/* ============================================================
+   AMBIENT BLOBS
+============================================================ */
+.blob {
+  position: absolute; border-radius: 50%; filter: blur(80px);
+  pointer-events: none; z-index: 0;
+  animation: blobFloat 8s ease-in-out infinite;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(30px,-20px) scale(1.05); }
+  66% { transform: translate(-20px,30px) scale(0.95); }
+}
+
+/* ============================================================
+   PAGE 1 — HERO
+============================================================ */
+#hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  overflow: hidden;
+}
+#hero .blob1 { width: 500px; height: 500px; background: rgba(108,71,255,0.12); top: -100px; right: -100px; animation-delay: 0s; }
+#hero .blob2 { width: 350px; height: 350px; background: rgba(0,255,179,0.08); bottom: 0; left: 200px; animation-delay: -3s; }
+
+.hero-left { position: relative; z-index: 1; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing: 2px; color: var(--accent2);
+  margin-bottom: 28px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.3s;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent2);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,255,179,0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(0,255,179,0); }
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 6vw, 80px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 6px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.5s;
+}
+.hero-name .line1 { display: block; color: var(--text); }
+.hero-name .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background-size: 200%;
+  animation: gradMove 4s linear infinite, slideUp 0.7s ease forwards 0.5s;
+}
+@keyframes gradMove { to { background-position: 200%; } }
+
+.hero-role {
+  font-family: var(--font-mono);
+  font-size: 15px; color: var(--muted);
+  margin: 20px 0 36px;
+  min-height: 22px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.7s;
+}
+.typed { color: var(--accent); }
+.blink { color: var(--accent2); animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.hero-desc {
+  font-size: 16px; line-height: 1.8; color: #7070a0;
+  max-width: 440px; margin-bottom: 44px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.9s;
+}
+
+.hero-actions {
+  display: flex; gap: 16px; align-items: center;
+  opacity: 0; animation: slideUp 0.7s ease forwards 1.1s;
+}
+.btn-mag {
+  position: relative; overflow: hidden;
+  padding: 14px 32px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  border: none; cursor: none; border-radius: 100px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none; display: inline-block;
+}
+.btn-mag.primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(108,71,255,0.4);
+}
+.btn-mag.primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(108,71,255,0.6); }
+.btn-mag.outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-mag.outline:hover { border-color: var(--accent); background: rgba(108,71,255,0.08); }
+.btn-mag::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.btn-mag:hover::before { opacity: 1; }
+
+.hero-socials {
+  display: flex; align-items: center; gap: 16px; margin-top: 40px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 1.3s;
+}
+.social-label { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 2px; }
+.social-line { width: 32px; height: 1px; background: var(--border); }
+.social-link {
+  width: 40px; height: 40px; border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; transition: all 0.3s;
+  background: var(--surface);
+}
+.social-link:hover { border-color: var(--accent); background: rgba(108,71,255,0.1); transform: translateY(-3px); }
+
+/* HERO RIGHT — Photo */
+.hero-right {
+  position: relative; z-index: 1;
+  display: flex; justify-content: center; align-items: center;
+  opacity: 0; animation: fadeIn 1s ease forwards 0.6s;
+}
+.photo-container {
+  position: relative; width: 340px; height: 400px;
+}
+.photo-bg-card {
+  position: absolute; inset: 0; border-radius: 28px;
+  background: linear-gradient(135deg, rgba(108,71,255,0.15), rgba(0,255,179,0.08));
+  border: 1px solid var(--border);
+  transform: rotate(4deg);
+  transition: transform 0.5s ease;
+}
+.photo-container:hover .photo-bg-card { transform: rotate(6deg) scale(1.02); }
+.photo-main {
+  position: absolute; inset: 0; border-radius: 24px;
+  overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, #1a1040, #0a2010);
+  transition: transform 0.4s ease;
+}
+.photo-main img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top;
+}
+.photo-main .photo-fallback {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: var(--muted);
+  font-size: 70px;
+}
+.photo-badge {
+  position: absolute; bottom: -16px; left: -16px;
+  background: rgba(10,10,20,0.9); backdrop-filter: blur(12px);
+  border: 1px solid var(--border); border-radius: 16px;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+  animation: slideUp 0.7s ease forwards 1s;
+}
+.badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); animation: glowPulse 2s ease-in-out infinite; }
+.badge-text { font-family: var(--font-mono); font-size: 12px; color: var(--text); }
+.badge-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.photo-tag {
+  position: absolute; top: -14px; right: -14px;
+  background: rgba(10,10,20,0.9); backdrop-filter: blur(12px);
+  border: 1px solid rgba(108,71,255,0.3); border-radius: 12px;
+  padding: 10px 16px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--accent);
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* Tilt effect */
+.photo-container {
+  perspective: 1000px;
+}
+.photo-tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+
+@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* ============================================================
+   SECTION HEADERS
+============================================================ */
+.sec-header { margin-bottom: 60px; }
+.sec-tag {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent); letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+}
+.sec-tag::after { content:''; flex:1; max-width:60px; height:1px; background:var(--accent); opacity:0.4; }
+.sec-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 52px); font-weight: 800;
+  letter-spacing: -1.5px; line-height: 1.05;
+}
+.sec-title em { font-style: normal; color: var(--accent2); }
+
+/* ============================================================
+   PAGE 2 — SKILLS
+============================================================ */
+#skills { background: linear-gradient(180deg, var(--bg) 0%, #060612 100%); }
+#skills .blob3 { width:400px; height:400px; background:rgba(0,255,179,0.06); top:10%; left:-100px; animation-delay:-2s; }
+
+.skills-layout { display: grid; grid-template-columns: 1fr 1.6fr; gap: 60px; align-items: start; }
+.skills-intro p {
+  font-size: 16px; line-height: 1.8; color: #7070a0; margin-bottom: 32px;
+}
+.stack-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 16px;
+  color: var(--muted); transition: all 0.3s; cursor: default;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(108,71,255,0.08); }
+
+.skills-bars { display: flex; flex-direction: column; gap: 28px; }
+.skill-item {}
+.skill-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.skill-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+.skill-pct { font-family: var(--font-mono); font-size: 12px; color: var(--accent2); }
+.skill-track {
+  height: 3px; background: rgba(255,255,255,0.06);
+  border-radius: 2px; overflow: hidden;
+  position: relative;
+}
+.skill-bar {
+  height: 100%; width: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.skill-bar::after {
+  content: '';
+  position: absolute; right: 0; top: -3px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent2);
+  box-shadow: 0 0 10px var(--accent2);
+}
+
+/* ============================================================
+   PAGE 3 — PROJECTS
+============================================================ */
+#projects { background: linear-gradient(180deg, #060612 0%, var(--bg) 100%); }
+#projects .blob4 { width:450px; height:450px; background:rgba(108,71,255,0.08); bottom:0; right:-100px; animation-delay:-5s; }
+
+.projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.proj {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  position: relative; overflow: hidden;
+  cursor: default;
+}
+.proj::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(108,71,255,0.08) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.proj:hover { border-color: rgba(108,71,255,0.3); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+.proj:hover::before { opacity: 1; }
+.proj-num {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--muted); letter-spacing: 2px; margin-bottom: 20px;
+}
+.proj-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+.proj-desc { font-size: 14px; line-height: 1.7; color: #6060a0; margin-bottom: 24px; }
+.proj-stack { display: flex; flex-wrap: wrap; gap: 8px; }
+.pstack {
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 5px 12px; border-radius: 6px;
+  border: 1px solid var(--border); color: var(--muted);
+}
+.pstack.green { border-color: rgba(0,255,179,0.25); color: var(--accent2); background: rgba(0,255,179,0.05); }
+.pstack.purple { border-color: rgba(108,71,255,0.3); color: #9d87ff; background: rgba(108,71,255,0.05); }
+.pstack.red { border-color: rgba(255,61,107,0.25); color: var(--accent3); background: rgba(255,61,107,0.05); }
+
+.proj-featured {
+  grid-column: span 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  padding: 0; overflow: hidden;
+}
+.proj-featured .proj-content { padding: 40px; }
+.proj-featured .proj-visual {
+  background: linear-gradient(135deg, rgba(108,71,255,0.15), rgba(0,255,179,0.08));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px;
+  border-left: 1px solid var(--border);
+}
+
+/* ============================================================
+   PAGE 4 — CONTACT
+============================================================ */
+#contact {
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 120px 40px;
+}
+#contact .blob5 { width:600px; height:600px; background:rgba(108,71,255,0.07); top:50%; left:50%; transform:translate(-50%,-50%); }
+
+.contact-inner { position: relative; z-index: 1; max-width: 700px; }
+.contact-eyebrow {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent2); letter-spacing: 3px; margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.contact-eyebrow::before, .contact-eyebrow::after {
+  content:''; width:40px; height:1px; background:rgba(0,255,179,0.3);
+}
+.contact-title {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 6vw, 72px);
+  font-weight: 800; letter-spacing: -2px;
+  line-height: 1; margin-bottom: 20px;
+}
+.contact-title span {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.contact-sub { font-size: 16px; color: #6060a0; line-height: 1.7; margin-bottom: 60px; }
+
+.contact-cards { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
+.ccard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px 40px;
+  text-decoration: none; color: inherit;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  min-width: 190px; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.ccard::before {
+  content:''; position:absolute; inset:0; border-radius:20px;
+  background:linear-gradient(135deg, rgba(108,71,255,0.1), rgba(0,255,179,0.05));
+  opacity:0; transition:opacity 0.4s;
+}
+.ccard:hover { transform:translateY(-8px) scale(1.02); border-color:rgba(108,71,255,0.4); box-shadow:0 30px 70px rgba(0,0,0,0.6); }
+.ccard:hover::before { opacity:1; }
+.ccard svg { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
+.ccard:hover svg { transform: scale(1.15) rotate(-5deg); }
+.ccard-platform { font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+.ccard-handle { font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--text); }
+
+.contact-footer { font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:1px; }
+
+/* ============================================================
+   SCROLL INDICATOR DOTS — hidden, nav handled by top bar only
+============================================================ */
+.page-nav { display: none; }
+
+/* ============================================================
+   REVEAL ANIMATIONS
+============================================================ */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity:0; transform:translateX(-32px); transition:opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+.reveal-left.in { opacity:1; transform:translateX(0); }
+.reveal-right { opacity:0; transform:translateX(32px); transition:opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+.reveal-right.in { opacity:1; transform:translateX(0); }
+
+/* stagger delays */
+.d1{transition-delay:0.1s} .d2{transition-delay:0.2s} .d3{transition-delay:0.3s}
+.d4{transition-delay:0.4s} .d5{transition-delay:0.5s} .d6{transition-delay:0.6s}
+
+/* ============================================================
+   SCROLL HINT
+============================================================ */
+.scroll-cue {
+  position: absolute; bottom: 40px; left: 80px;
+  display: flex; align-items: center; gap: 12px;
+  opacity: 0; animation: fadeIn 1s ease forwards 2s;
+}
+.scroll-line { width: 40px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+.scroll-line::after {
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background: var(--accent2);
+  animation: lineSlide 2s ease-in-out infinite;
+}
+@keyframes lineSlide { 0%{left:-100%} 50%,100%{left:100%} }
+.scroll-text { font-family:var(--font-mono); font-size:11px; color:var(--muted); letter-spacing:2px; }
+
+/* ============================================================
+   MOBILE
+============================================================ */
+@media(max-width:900px){
+  section{padding:100px 28px 60px;}
+  #hero{grid-template-columns:1fr;}
+  .hero-right{display:none;}
+  nav{padding:0 28px;}
+  .nav-menu{gap:20px;}
+  .skills-layout{grid-template-columns:1fr;}
+  .projects-grid{grid-template-columns:1fr;}
+  .proj-featured{grid-column:span 1; grid-template-columns:1fr;}
+  .proj-featured .proj-visual{display:none;}
+  .scroll-cue{left:28px;}
+}
+
+/* ============================================================
+   CONTACT FORM
+============================================================ */
+.contact-form {
+  width: 100%; max-width: 580px;
+  margin: 0 auto 50px;
+  display: flex; flex-direction: column; gap: 16px;
+  text-align: left;
+}
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cf-field { display: flex; flex-direction: column; gap: 8px; }
+.cf-field label {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+}
+.cf-field input, .cf-field textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 18px;
+  color: var(--text); font-family: var(--font-body); font-size: 14px;
+  outline: none; transition: all 0.3s; resize: none;
+  width: 100%;
+}
+.cf-field input:focus, .cf-field textarea:focus {
+  border-color: var(--accent);
+  background: rgba(108,71,255,0.06);
+  box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
+}
+.cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--muted); }
+.cf-btn {
+  padding: 16px 36px; border-radius: 100px;
+  background: linear-gradient(135deg, var(--accent), #9d6fff);
+  color: #fff; font-size: 15px; font-weight: 600;
+  border: none; cursor: none;
+  transition: all 0.3s; box-shadow: 0 8px 30px rgba(108,71,255,0.4);
+  font-family: var(--font-body); align-self: center; min-width: 220px;
+}
+.cf-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(108,71,255,0.6); }
+.cf-btn:disabled { opacity: 0.6; transform: none; }
+#cfResult {
+  text-align: center; font-size: 14px; padding: 12px;
+  border-radius: 10px; display: none;
+  font-family: var(--font-mono);
+}
+#cfResult.success { background: rgba(0,255,179,0.1); color: var(--accent2); border: 1px solid rgba(0,255,179,0.2); }
+#cfResult.error { background: rgba(255,61,107,0.1); color: var(--accent3); border: 1px solid rgba(255,61,107,0.2); }
+.contact-divider {
+  display: flex; align-items: center; gap: 16px;
+  max-width: 580px; margin: 0 auto 40px; width: 100%;
+  color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px;
+}
+.contact-divider::before, .contact-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+@media(max-width:600px){ .cf-row{grid-template-columns:1fr;} }
+
+
+/* Telegram Auth Widget Wrap */
+.tg-auth-wrap {
+  width: 100%; max-width: 520px;
+  margin: 0 auto 50px;
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px;
+}
+.tg-user-badge {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(0,212,170,0.08);
+  border: 1px solid rgba(0,212,170,0.2);
+  border-radius: 14px; padding: 14px 20px;
+  margin-bottom: 24px; width: 100%;
+}
+.tg-user-badge img {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 2px solid var(--accent2);
+}
+.tg-user-badge .tg-avatar-placeholder {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: #fff;
+}
+.tg-user-badge .tg-info { flex: 1; }
+.tg-user-badge .tg-name { font-weight: 700; font-size: 15px; }
+.tg-user-badge .tg-handle { font-family: var(--font-mono); font-size: 12px; color: var(--accent2); }
+.tg-auth-wrap .contact-form { width: 100%; margin: 0; }
+
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">TheKubanych</div>
+  <ul class="nav-menu">
+    <li><a href="#hero" data-sec="0"><span>01.</span>Главная</a></li>
+    <li><a href="#skills" data-sec="1"><span>02.</span>Навыки</a></li>
+    <li><a href="#projects" data-sec="2"><span>03.</span>Проекты</a></li>
+    <li><a href="#contact" data-sec="3"><span>04.</span>Контакт</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE DOTS -->
+<nav class="page-nav">
+  <div class="pnav-dot active" data-label="Главная" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pnav-dot" data-label="Навыки" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pnav-dot" data-label="Проекты" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="pnav-dot" data-label="Контакт" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})"></div>
+</nav>
+
+<!-- ============================================================
+     SECTION 1 — HERO
+============================================================ -->
+<section id="hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+
+  <div class="hero-left">
+    <div class="hero-eyebrow"><span class="eyebrow-dot"></span>BACKEND DEVELOPER · БГУ · 2 КУРС</div>
+    <h1 class="hero-name">
+      <span class="line1">The</span>
+      <span class="line2">Kubanych</span>
+    </h1>
+    <div class="hero-role">
+      <span class="typed" id="typed"></span><span class="blink">_</span>
+    </div>
+    <p class="hero-desc">
+      Строю серверную часть веб-приложений. Python, API, базы данных — это моё.
+      Студент 2-го курса БГУ, который пишет код каждый день.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-mag primary" id="btnContact">Написать мне</a>
+      <a href="#projects" class="btn-mag outline">Мои проекты →</a>
+    </div>
+    <div class="hero-socials">
+      <span class="social-label">НАЙТИ</span>
+      <div class="social-line"></div>
+      <a class="social-link" href="https://instagram.com/1.muxtarow" target="_blank" title="Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <defs><radialGradient id="ig" cx="30%" cy="107%" r="150%">
+            <stop offset="0%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/>
+            <stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/>
+          </radialGradient></defs>
+          <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig)"/>
+          <circle cx="12" cy="12" r="4.5" stroke="white" stroke-width="1.7" fill="none"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+        </svg>
+      </a>
+      <a class="social-link" href="https://t.me/themuhtarovv" target="_blank" title="Telegram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#2CA5E0"/>
+          <path d="M6.5 11.8l10.5-4-3.8 10-2.7-3.5-2.4 1.8.4-4.3z" fill="white"/>
+          <path d="M10.5 14.3l-.3 3.2 1.8-1.8" fill="#b3dff0"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="photo-container">
+      <div class="photo-bg-card"></div>
+      <div class="photo-tilt" id="tiltEl">
+        <div class="photo-main" id="photoMain">
+          <div class="photo-fallback" id="photoFallback">
+            <span style="font-size:48px">📸</span>
+            <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);text-align:center;padding:0 20px;line-height:1.6">Нажми чтобы<br>добавить фото</span>
+          </div>
+        </div>
+      </div>
+      <div class="photo-badge">
+        <div>
+          <div class="badge-dot"></div>
+        </div>
+        <div>
+          <div class="badge-text">Открыт к работе</div>
+          <div class="badge-sub">Backend · API · Python</div>
+        </div>
+      </div>
+      <div class="photo-tag">@1.muxtarow</div>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">СКРОЛЛ ВНИЗ</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — SKILLS
+============================================================ -->
+<section id="skills">
+  <div class="blob blob3"></div>
+  <div class="sec-header reveal">
+    <div class="sec-tag">02. НАВЫКИ</div>
+    <h2 class="sec-title">Мой <em>стек</em></h2>
+  </div>
+  <div class="skills-layout">
+    <div class="skills-intro reveal-left d1">
+      <p>Фокус на бэкенд разработке: строю надёжные API, работаю с базами данных и разворачиваю приложения на серверах.</p>
+      <br>
+      <p>Каждый день пишу код и изучаю новые технологии.</p>
+      <br><br>
+      <div class="stack-chips">
+        <span class="chip">Python</span>
+        <span class="chip">FastAPI</span>
+        <span class="chip">Django</span>
+        <span class="chip">PostgreSQL</span>
+        <span class="chip">SQLite</span>
+        <span class="chip">Git</span>
+        <span class="chip">Linux</span>
+        <span class="chip">REST API</span>
+        <span class="chip">Docker</span>
+        <span class="chip">Telegram Bot</span>
+      </div>
+    </div>
+    <div class="skills-bars reveal-right d2">
+      <div class="skill-item">
+        <div class="skill-head"><span class="skill-name">Python</span><span class="skill-pct">75%</span></div>
+        <div class="skill-track"><div class="skill-bar" data-w="75"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-head"><span class="skill-name">REST API / FastAPI</span><span class="skill-pct">65%</span></div>
+        <div class="skill-track"><div class="skill-bar" data-w="65"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-head"><span class="skill-name">PostgreSQL</span><span class="skill-pct">60%</span></div>
+        <div class="skill-track"><div class="skill-bar" data-w="60"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-head"><span class="skill-name">Git / GitHub</span><span class="skill-pct">70%</span></div>
+        <div class="skill-track"><div class="skill-bar" data-w="70"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-head"><span class="skill-name">Linux / Terminal</span><span class="skill-pct">55%</span></div>
+        <div class="skill-track"><div class="skill-bar" data-w="55"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-head"><span class="skill-name">Самообучение</span><span class="skill-pct">95%</span></div>
+        <div class="skill-track"><div class="skill-bar" data-w="95"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — PROJECTS
+============================================================ -->
+<section id="projects">
+  <div class="blob blob4"></div>
+  <div class="sec-header reveal">
+    <div class="sec-tag">03. ПРОЕКТЫ</div>
+    <h2 class="sec-title">Что я <em>создал</em></h2>
+  </div>
+  <div class="projects-grid">
+
+    <div class="proj proj-featured reveal d1">
+      <div class="proj-content">
+        <div class="proj-num">001 · FEATURED</div>
+        <div class="proj-title">Backend API<br>приложение</div>
+        <div class="proj-desc">Серверная часть веб-приложения с авторизацией, работой с БД и документацией через Swagger.</div>
+        <div class="proj-stack">
+          <span class="pstack purple">Python</span>
+          <span class="pstack purple">FastAPI</span>
+          <span class="pstack green">PostgreSQL</span>
+          <span class="pstack green">В процессе</span>
+        </div>
+      </div>
+      <div class="proj-visual">⚙️</div>
+    </div>
+
+    <div class="proj reveal d2">
+      <div class="proj-num">002</div>
+      <div class="proj-title">Telegram Bot</div>
+      <div class="proj-desc">Бот на Python с aiogram. Автоматизация задач, inline-кнопки, работа с внешними API.</div>
+      <div class="proj-stack">
+        <span class="pstack purple">Python</span>
+        <span class="pstack green">aiogram</span>
+        <span class="pstack red">Telegram API</span>
+      </div>
+    </div>
+
+    <div class="proj reveal d3">
+      <div class="proj-num">003</div>
+      <div class="proj-title">Студ. проекты БГУ</div>
+      <div class="proj-desc">Учебные работы по программированию и информационным технологиям. 2-й курс, активно.</div>
+      <div class="proj-stack">
+        <span class="pstack purple">Python</span>
+        <span class="pstack green">Учёба</span>
+        <span class="pstack green">БГУ</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — CONTACT
+============================================================ -->
+<section id="contact">
+  <div class="blob blob5"></div>
+  <div class="contact-inner">
+    <div class="contact-eyebrow reveal">04. КОНТАКТЫ</div>
+    <h2 class="contact-title reveal d1">Давай <span>работать</span><br>вместе</h2>
+    <p class="contact-sub reveal d2">Открыт к стажировкам, проектам и просто интересному общению</p>
+
+    <!-- TELEGRAM AUTH + ФОРМА -->
+    <div class="tg-auth-wrap reveal d3" id="tgAuthWrap">
+
+      <!-- ШАГ 1: Войди через Telegram -->
+      <div id="tgLoginStep">
+        <p style="font-family:var(--font-mono);font-size:13px;color:var(--muted);margin-bottom:20px">
+          Войди через Telegram чтобы написать сообщение
+        </p>
+        <div id="tgWidgetContainer"></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:14px;font-family:var(--font-mono)">
+          Твои данные используются только для идентификации
+        </p>
+      </div>
+
+      <!-- ШАГ 2: Форма (после входа) -->
+      <div id="tgFormStep" style="display:none;width:100%">
+        <div class="tg-user-badge" id="tgUserBadge"></div>
+        <form class="contact-form" id="contactForm">
+          <div class="cf-field">
+            <label>Тема</label>
+            <input type="text" name="subject" placeholder="О чём хочешь написать?" required>
+          </div>
+          <div class="cf-field">
+            <label>Сообщение</label>
+            <textarea name="message" rows="4" placeholder="Напиши своё сообщение..." required></textarea>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <button type="submit" class="cf-btn" id="cfBtn">
+              <span id="cfBtnText">Отправить →</span>
+              <span id="cfBtnLoader" style="display:none">⏳ Отправляю...</span>
+            </button>
+            <button type="button" class="cf-btn" id="cfLogout"
+              style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none">
+              Выйти
+            </button>
+          </div>
+          <div id="cfResult"></div>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="contact-divider reveal d4"><span>или напиши напрямую</span></div>
+
+    <div class="contact-cards">
+      <a class="ccard reveal d2" href="https://instagram.com/1.muxtarow" target="_blank">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <defs><radialGradient id="ig2" cx="30%" cy="107%" r="150%">
+            <stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/>
+            <stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/>
+            <stop offset="90%" stop-color="#285AEB"/>
+          </radialGradient></defs>
+          <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig2)"/>
+          <circle cx="12" cy="12" r="4.5" stroke="white" stroke-width="1.8" fill="none"/>
+          <circle cx="17.5" cy="6.5" r="1.3" fill="white"/>
+        </svg>
+        <div class="ccard-platform">Instagram</div>
+        <div class="ccard-handle">@1.muxtarow</div>
+      </a>
+
+      <a class="ccard reveal d3" href="https://t.me/themuhtarovv" target="_blank">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#2CA5E0"/>
+          <path d="M6.5 11.8l11-4.2-4 11-3-4-2.7 2 .3-4z" fill="white"/>
+          <path d="M10.7 14.5l-.3 3 1.8-1.7" fill="#b3dff0"/>
+        </svg>
+        <div class="ccard-platform">Telegram</div>
+        <div class="ccard-handle">@themuhtarovv</div>
+      </a>
+
+      <a class="ccard reveal d4" href="https://wa.me/996505550978" target="_blank">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#25D366"/>
+          <path d="M17.5 14.5c-.3-.1-1.7-.8-2-0.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-1-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.2.2 2 3 4.8 4.2.7.3 1.2.4 1.6.5.7.2 1.3.2 1.8.1.6-.1 1.7-.7 2-1.4.2-.6.2-1.2.1-1.3z" fill="white"/>
+        </svg>
+        <div class="ccard-platform">WhatsApp</div>
+        <div class="ccard-handle">+996 505 550 978</div>
+      </a>
+
+      <div class="ccard reveal d5">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="nkg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#6c47ff"/><stop offset="100%" stop-color="#00ffb3"/>
+          </linearGradient></defs>
+          <circle cx="12" cy="8.5" r="3.5" fill="url(#nkg)"/>
+          <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="url(#nkg)" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="ccard-platform">Nickname</div>
+        <div class="ccard-handle">TheKubanych</div>
+      </div>
+    </div>
+
+    <div class="contact-footer reveal d5">© 2025 TheKubanych · Backend Developer · БГУ</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+// CURSOR
+const cur = document.getElementById('cur');
+const ring = document.getElementById('curRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+// MAGNETIC BUTTONS
+document.querySelectorAll('.btn-mag').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const bx = ((e.clientX - r.left) / r.width) * 100;
+    const by = ((e.clientY - r.top) / r.height) * 100;
+    btn.style.setProperty('--mx', bx + '%');
+    btn.style.setProperty('--my', by + '%');
+    const dx = (e.clientX - (r.left + r.width/2)) * 0.2;
+    const dy = (e.clientY - (r.top + r.height/2)) * 0.2;
+    btn.style.transform = `translate(${dx}px,${dy}px) translateY(-3px)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+});
+
+// TYPED EFFECT
+const roles = ['Backend Developer', 'Python Разработчик', 'API Builder', 'БГУ · 2 Курс', 'TheKubanych'];
+let ri = 0, ci = 0, del = false;
+const tel = document.getElementById('typed');
+function type() {
+  const cur = roles[ri];
+  if (!del) { tel.textContent = cur.slice(0, ++ci); if(ci===cur.length){del=true; setTimeout(type,2000); return;} }
+  else { tel.textContent = cur.slice(0, --ci); if(ci===0){del=false; ri=(ri+1)%roles.length;} }
+  setTimeout(type, del ? 50 : 90);
+}
+type();
+
+// PHOTO TILT
+const tilt = document.getElementById('tiltEl');
+const photoSection = document.getElementById('hero');
+photoSection.addEventListener('mousemove', e => {
+  if (!tilt) return;
+  const r = tilt.getBoundingClientRect();
+  const x = (e.clientY - r.top - r.height/2) / r.height * 15;
+  const y = -(e.clientX - r.left - r.width/2) / r.width * 15;
+  tilt.style.transform = `rotateX(${x}deg) rotateY(${y}deg)`;
+});
+photoSection.addEventListener('mouseleave', () => {
+  if (tilt) tilt.style.transform = '';
+});
+
+// PHOTO CLICK TO UPLOAD
+document.getElementById('photoMain').addEventListener('click', () => {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      const el = document.getElementById('photoMain');
+      el.innerHTML = `<img src="${ev.target.result}" alt="TheKubanych" style="width:100%;height:100%;object-fit:cover;object-position:top">`;
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+});
+document.getElementById('photoMain').style.cursor = 'pointer';
+
+// SCROLL REVEAL
+const revEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in'), i * 60);
+    }
+  });
+}, { threshold: 0.12 });
+revEls.forEach(el => obs.observe(el));
+
+// SKILL BARS
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-bar').forEach(b => {
+        b.style.width = b.dataset.w + '%';
+      });
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+const skillsEl = document.getElementById('skills');
+if (skillsEl) barObs.observe(skillsEl);
+
+// NAV + PAGE DOTS ACTIVE STATE
+const sections = ['hero','skills','projects','contact'];
+const navLinks = document.querySelectorAll('.nav-menu a');
+const dots = document.querySelectorAll('.pnav-dot');
+
+const secObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = sections.indexOf(e.target.id);
+      if (idx < 0) return;
+      navLinks.forEach((a,i) => a.classList.toggle('active', i===idx));
+      dots.forEach((d,i) => d.classList.toggle('active', i===idx));
+    }
+  });
+}, { threshold: 0.5 });
+sections.forEach(id => { const el = document.getElementById(id); if(el) secObs.observe(el); });
+
+// ============================================================
+// API INTEGRATION
+// ============================================================
+const API_URL = window.location.origin + '/api';
+
+// ── Загрузка навыков из API ──
+async function loadSkills() {
+  try {
+    const res = await fetch(`${API_URL}/skills/`);
+    if (!res.ok) return; // если API не запущен — оставляем статичные данные
+    const skills = await res.json();
+    const container = document.querySelector('.skills-bars');
+    if (!container || !skills.length) return;
+    container.innerHTML = skills.map(s => `
+      <div class="skill-item">
+        <div class="skill-head">
+          <span class="skill-name">${s.icon} ${s.name}</span>
+          <span class="skill-pct">${s.percent}%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-bar" data-w="${s.percent}"></div>
+        </div>
+      </div>
+    `).join('');
+    // перезапускаем анимацию баров
+    setTimeout(() => {
+      container.querySelectorAll('.skill-bar').forEach(b => {
+        b.style.width = b.dataset.w + '%';
+      });
+    }, 300);
+  } catch(e) { /* API не запущен, используем статику */ }
+}
+
+// ── Загрузка проектов из API ──
+async function loadProjects() {
+  try {
+    const res = await fetch(`${API_URL}/projects/`);
+    if (!res.ok) return;
+    const projects = await res.json();
+    const grid = document.querySelector('.projects-grid');
+    if (!grid || !projects.length) return;
+    const statusColors = { active: 'green', done: 'purple', planned: 'red' };
+    grid.innerHTML = projects.map((p, i) => `
+      <div class="proj ${p.is_featured ? 'proj-featured' : ''} reveal d${i+1}">
+        ${p.is_featured ? '<div class="proj-content">' : ''}
+        <div class="proj-num">0${i+1}${p.is_featured ? ' · FEATURED' : ''}</div>
+        <div class="proj-title">${p.title}</div>
+        <div class="proj-desc">${p.description}</div>
+        <div class="proj-stack">
+          ${p.stack.map(t => `<span class="pstack purple">${t}</span>`).join('')}
+          <span class="pstack ${statusColors[p.status] || 'green'}">${p.status_display}</span>
+        </div>
+        ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="pstack green" style="margin-top:12px;display:inline-block;text-decoration:none">GitHub →</a>` : ''}
+        ${p.is_featured ? '</div><div class="proj-visual">⚙️</div>' : ''}
+      </div>
+    `).join('');
+    // переподключаем reveal observer
+    grid.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  } catch(e) { /* API не запущен */ }
+}
+
+// ── Загрузка статистики просмотров ──
+async function loadStats() {
+  try {
+    const res = await fetch(`${API_URL}/stats/`);
+    if (!res.ok) return;
+    const data = await res.json();
+    // Добавляем бейджик просмотров в навбар
+    const logo = document.querySelector('.nav-logo');
+    if (logo && data.total_views > 0) {
+      logo.insertAdjacentHTML('afterend',
+        `<span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:16px">
+          👁 ${data.total_views} просмотров
+        </span>`
+      );
+    }
+  } catch(e) {}
+}
+
+// ── Telegram Login + Contact Form ──
+let tgCurrentUser = null;
+
+// Инициализируем Telegram Login Widget
+function initTelegramWidget() {
+  const container = document.getElementById('tgWidgetContainer');
+  if (!container) return;
+  // Получаем bot_name из мета-тега или используем напрямую
+  const botName = document.querySelector('meta[name="tg-bot"]')?.content || 'themuhtarovv_bot';
+  const script = document.createElement('script');
+  script.src = 'https://telegram.org/js/telegram-widget.js?22';
+  script.setAttribute('data-telegram-login', botName);
+  script.setAttribute('data-size', 'large');
+  script.setAttribute('data-radius', '12');
+  script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+  script.setAttribute('data-request-access', 'write');
+  script.async = true;
+  container.appendChild(script);
+}
+
+// Колбэк от Telegram виджета
+window.onTelegramAuth = async function(user) {
+  try {
+    const res = await fetch(`${API_URL}/auth/telegram/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    });
+    const json = await res.json();
+    if (res.ok && json.success) {
+      tgCurrentUser = json.user;
+      showForm(json.user);
+    } else {
+      alert('Ошибка авторизации: ' + (json.error || 'попробуй снова'));
+    }
+  } catch(e) {
+    // Если API недоступен — всё равно показываем форму с данными из виджета
+    tgCurrentUser = { id: user.id, name: user.first_name + (user.last_name ? ' '+user.last_name : ''), username: user.username || '', photo_url: user.photo_url || '' };
+    showForm(tgCurrentUser);
+  }
+};
+
+function showForm(user) {
+  document.getElementById('tgLoginStep').style.display = 'none';
+  document.getElementById('tgFormStep').style.display = 'block';
+  // Показываем бейджик пользователя
+  const badge = document.getElementById('tgUserBadge');
+  const avatar = user.photo_url
+    ? `<img src="${user.photo_url}" alt="${user.name}">`
+    : `<div class="tg-avatar-placeholder">${user.name[0]}</div>`;
+  badge.innerHTML = `
+    ${avatar}
+    <div class="tg-info">
+      <div class="tg-name">${user.name}</div>
+      <div class="tg-handle">${user.username ? '@'+user.username : 'Telegram пользователь'}</div>
+    </div>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" fill="#2CA5E0"/>
+      <path d="M6.5 11.8l11-4.2-4 11-3-4-2.7 2 .3-4z" fill="white"/>
+    </svg>
+  `;
+}
+
+// Выход
+document.getElementById('cfLogout')?.addEventListener('click', () => {
+  tgCurrentUser = null;
+  document.getElementById('tgLoginStep').style.display = 'block';
+  document.getElementById('tgFormStep').style.display = 'none';
+  document.getElementById('contactForm')?.reset();
+});
+
+// Отправка формы
+document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('cfBtn');
+  const btnText = document.getElementById('cfBtnText');
+  const btnLoader = document.getElementById('cfBtnLoader');
+  const result = document.getElementById('cfResult');
+
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  btnLoader.style.display = 'inline';
+  result.style.display = 'none';
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  // Добавляем данные Telegram пользователя
+  if (tgCurrentUser) {
+    data.name = tgCurrentUser.name;
+    data.telegram_user_id = tgCurrentUser.id;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/contact/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (res.ok) {
+      result.className = 'success';
+      result.textContent = '✅ ' + (json.message || 'Сообщение отправлено!');
+      e.target.reset();
+    } else {
+      result.className = 'error';
+      result.textContent = '❌ ' + Object.values(json).flat().join(', ');
+    }
+  } catch(err) {
+    result.className = 'error';
+    result.textContent = '❌ Сервер недоступен. Напиши напрямую в Telegram!';
+  }
+
+  result.style.display = 'block';
+  btn.disabled = false;
+  btnText.style.display = 'inline';
+  btnLoader.style.display = 'none';
+});
+
+initTelegramWidget();
+
+// ── Запускаем всё ──
+loadSkills();
+loadProjects();
+loadStats();
+
+</script>
+</body>
+</html>
+
+
+const botName = 'mytelenewbot';
