@@ -102,3 +102,4 @@ class PageView(models.Model):
         for row in cls.objects.values_list('unique_ips', flat=True):
             all_ips.update(row)
         return len(all_ips)
+
