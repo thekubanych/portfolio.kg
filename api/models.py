@@ -15,11 +15,10 @@ class TelegramUser(models.Model):
     last_name = models.CharField(max_length=100, blank=True, verbose_name='Фамилия')
     username = models.CharField(max_length=100, blank=True, verbose_name='Username')
 
-    # Если используешь Telegram Login Widget: url фото может приходить/меняться
+
     photo_url = models.URLField(blank=True, verbose_name='Фото')
 
-    # ВАЖНО: auth_date НЕ должен быть auto_now.
-    # Заполняй из данных Telegram (обычно приходит unix time, конвертируешь в datetime).
+
     auth_date = models.DateTimeField(null=True, blank=True, verbose_name='Дата авторизации (TG)')
 
     # Последний успешный вход/использование (можно обновлять при логине)
@@ -89,7 +88,7 @@ class Project(models.Model):
     short_description = models.CharField(max_length=255, blank=True)
     description = models.TextField()
 
-    # Оставляем JSONField как у тебя (быстро и просто)
+
     stack = models.JSONField(default=list)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
@@ -174,8 +173,7 @@ class ContactMessage(models.Model):
 class PageView(models.Model):
     date = models.DateField(auto_now_add=True, db_index=True)
     count = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
-    unique_ips = models.JSONField(default=list)  # лучше хранить хеши, но оставляю как у тебя
-
+    unique_ips = models.JSONField(default=list)
     class Meta:
         ordering = ['-date']
         verbose_name = 'Просмотры'
@@ -191,9 +189,42 @@ class PageView(models.Model):
 
     @classmethod
     def get_unique_total(cls) -> int:
-        # если unique_ips будет большим, лучше вынести в отдельную таблицу
         all_ips = set()
         for row in cls.objects.values_list('unique_ips', flat=True):
             if isinstance(row, list):
                 all_ips.update(row)
         return len(all_ips)
+
+
+class WorkExperience(models.Model):
+    """Опыт работы / образование."""
+    company = models.CharField(max_length=200, verbose_name='Компания/Учебное заведение')
+    role = models.CharField(max_length=200, verbose_name='Должность/Специальность')
+    period = models.CharField(max_length=100, help_text='Напр: 2022 — н.в. или 2019 — 2023')
+    description = models.TextField(blank=True, verbose_name='Описание')
+    logo = models.FileField(upload_to='company_logos/', blank=True, null=True, verbose_name='Логотип')
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = 'Опыт'
+        verbose_name_plural = 'Опыт работы'
+
+    def __str__(self):
+        return f"{self.role} @ {self.company}"
+
+
+class ResumeFile(models.Model):
+
+    file = models.FileField(upload_to='resume/', verbose_name='Файл')
+    is_active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Резюме'
+        verbose_name_plural = 'Резюме'
+
+    def __str__(self):
+        return self.file.name

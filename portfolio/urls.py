@@ -1,17 +1,42 @@
 from django.contrib import admin
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from api.models import WorkExperience
+
+
+def home_view(request):
+    """Главная с опыт работы — рендерим на сервере, чтобы не было пусто."""
+    from api.serializers import WorkExperienceSerializer
+    experience = WorkExperience.objects.filter(is_active=True)
+    experience_data = WorkExperienceSerializer(
+        experience, many=True, context={'request': request}
+    ).data
+    return render(request, 'index.html', {'experience': experience_data})
+
+
+def robots_txt(request):
+    content = "User-agent: *\nAllow: /\n\nSitemap: {}/sitemap.xml\n".format(request.build_absolute_uri('/').rstrip('/'))
+    return HttpResponse(content, content_type="text/plain")
+
+
+def sitemap_xml(request):
+    base = request.build_absolute_uri('/').rstrip('/')
+    content = f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+</urlset>'''
+    return HttpResponse(content, content_type="application/xml")
+
 
 urlpatterns = [
-    # Фронтенд — главная страница
-    path('', TemplateView.as_view(template_name='index.html'), name='home'),
-
-    # Админка
+    path('', home_view, name='home'),
+    path('robots.txt', robots_txt),
+    path('sitemap.xml', sitemap_xml),
     path('admin/', admin.site.urls),
-
-    # API
     path('api/', include('api.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

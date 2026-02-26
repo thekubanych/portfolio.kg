@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Skill, Project, ContactMessage
+from .models import Skill, Project, ContactMessage, WorkExperience
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -18,10 +18,35 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class ContactMessageSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False, allow_blank=True, default='')
+    # Honeypot — боты заполняют, люди нет
+    website = serializers.CharField(required=False, allow_blank=True, write_only=True)
+
     class Meta:
         model = ContactMessage
-        fields = ['name', 'email', 'subject', 'message']
+        fields = ['name', 'email', 'subject', 'message', 'website']
+
     def validate_message(self, value):
         if len(value) < 5:
             raise serializers.ValidationError("Сообщение слишком короткое")
         return value
+
+    def validate_website(self, value):
+        if value:
+            raise serializers.ValidationError("Спам")
+        return value
+
+
+class WorkExperienceSerializer(serializers.ModelSerializer):
+    logo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkExperience
+        fields = ['id', 'company', 'role', 'period', 'description', 'logo_url', 'order']
+
+    def get_logo_url(self, obj):
+        if obj.logo:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.logo.url)
+            return obj.logo.url
+        return None

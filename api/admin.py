@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Skill, Project, ContactMessage, PageView
+from .models import Skill, Project, ContactMessage, PageView, WorkExperience, ResumeFile
 
 
 @admin.register(Skill)
@@ -74,3 +74,21 @@ class TelegramUserAdmin(admin.ModelAdmin):
     def full_name(self, obj):
         return obj.full_name
     full_name.short_description = 'Имя'
+
+
+@admin.register(WorkExperience)
+class WorkExperienceAdmin(admin.ModelAdmin):
+    list_display = ['role', 'company', 'period', 'order', 'is_active', 'has_logo']
+    list_editable = ['order', 'is_active']
+    search_fields = ['company', 'role']
+
+    def has_logo(self, obj):
+        return bool(obj.logo)
+    has_logo.boolean = True
+    has_logo.short_description = 'Логотип'
+
+
+@admin.register(ResumeFile)
+class ResumeFileAdmin(admin.ModelAdmin):
+    list_display = ['file', 'is_active', 'updated_at']
+    list_editable = ['is_active']

@@ -4,12 +4,14 @@ import time
 import requests
 from datetime import date, timedelta
 from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import send_mail
+from django.http import FileResponse, Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Skill, Project, ContactMessage, PageView, TelegramUser
-from .serializers import SkillSerializer, ProjectSerializer, ContactMessageSerializer
+from .models import Skill, Project, ContactMessage, PageView, TelegramUser, WorkExperience, ResumeFile
+from .serializers import SkillSerializer, ProjectSerializer, ContactMessageSerializer, WorkExperienceSerializer
 
 
 # ── Skills ──
@@ -89,6 +91,21 @@ def telegram_auth(request):
 def contact_send(request):
     data = request.data.copy()
     telegram_user_id = data.pop('telegram_user_id', None)
+    data.pop('website', None)  # honeypot, уже проверен в сериализаторе
+
+    # Rate limiting
+    ip = _get_ip(request)
+    cache_key = f"contact_{ip}"
+    attempts = cache.get(cache_key, [])
+    now = time.time()
+    window = getattr(settings, 'CONTACT_RATE_WINDOW', 600)
+    limit = getattr(settings, 'CONTACT_RATE_LIMIT', 3)
+    attempts = [t for t in attempts if now - t < window]
+    if len(attempts) >= limit:
+        return Response(
+            {'error': 'Слишком много сообщений. Подожди несколько минут.'},
+            status=status.HTTP_429_TOO_MANY_REQUESTS
+        )
 
     # Email необязателен если вошёл через Telegram
     if not data.get('email'):
@@ -98,7 +115,6 @@ def contact_send(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    ip = _get_ip(request)
     tg_user = None
     if telegram_user_id:
         try:
@@ -109,8 +125,12 @@ def contact_send(request):
     msg = ContactMessage.objects.create(
         ip_address=ip,
         telegram_user=tg_user,
-        **serializer.validated_data
+        source='telegram' if tg_user else 'site',
+        **{k: v for k, v in serializer.validated_data.items() if k != 'website'}
     )
+
+    attempts.append(now)
+    cache.set(cache_key, attempts, window)
 
     _notify_telegram(msg)
 
@@ -130,6 +150,25 @@ def contact_send(request):
         {'success': True, 'message': 'Сообщение отправлено! Отвечу как можно скорее 🚀'},
         status=status.HTTP_201_CREATED
     )
+
+
+# ── Experience ──
+@api_view(['GET'])
+def experience_list(request):
+    items = WorkExperience.objects.filter(is_active=True)
+    return Response(WorkExperienceSerializer(items, many=True, context={'request': request}).data)
+
+
+# ── CV Download ──
+@api_view(['GET'])
+def cv_download(request):
+    """Возвращает URL активного CV или 404."""
+    cv = ResumeFile.objects.filter(is_active=True).order_by('-updated_at').first()
+    if not cv or not cv.file:
+        return Response({'url': None}, status=status.HTTP_404_NOT_FOUND)
+    from django.conf import settings
+    url = request.build_absolute_uri(cv.file.url)
+    return Response({'url': url})
 
 
 # ── Stats ──

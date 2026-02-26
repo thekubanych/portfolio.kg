@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TheKubanych · Backend Developer</title>
+<meta name="description" content="Backend Developer · Python, FastAPI, Django. Открыт к стажировкам и проектам.">
+<meta property="og:title" content="TheKubanych · Backend Developer">
+<meta property="og:description" content="Backend Developer · Python, FastAPI, Django. Открыт к стажировкам и проектам.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TheKubanych · Backend Developer">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root[data-theme="dark"] {
@@ -335,8 +341,15 @@ section {
   font-family:var(--font-mono);font-size:12px;
   background:var(--surface);border:1px solid var(--border);
   border-radius:8px;padding:8px 16px;color:var(--muted);transition:all 0.3s;cursor:default;
+  display:inline-flex;align-items:center;gap:7px;
 }
 .chip:hover { border-color:var(--accent);color:var(--accent);background:rgba(108,71,255,0.08); }
+.chip img,.skill-icon,.pstack img {
+  width:15px;height:15px;object-fit:contain;flex-shrink:0;
+  display:inline-block;vertical-align:middle;
+}
+.skill-name { display:flex;align-items:center;gap:9px; }
+.pstack { display:inline-flex;align-items:center;gap:6px; }
 .skills-bars { display:flex;flex-direction:column;gap:28px; }
 .skill-head { display:flex;justify-content:space-between;align-items:center;margin-bottom:10px; }
 .skill-name { font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text); }
@@ -384,6 +397,24 @@ section {
   display:flex;align-items:center;justify-content:center;font-size:80px;
   border-left:1px solid var(--border);
 }
+
+/* EXPERIENCE */
+#experience { background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+.exp-timeline { max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:24px; }
+.exp-item {
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:16px;padding:28px 32px;
+  transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
+  display:flex;align-items:flex-start;gap:24px;
+}
+.exp-item:hover { border-color:rgba(108,71,255,0.3);transform:translateX(8px);box-shadow:0 16px 40px var(--shadow); }
+.exp-item .exp-logo { width:64px;height:64px;object-fit:contain;flex-shrink:0;border-radius:12px; }
+.exp-item .exp-body { flex:1;min-width:0; }
+.exp-item .exp-role { font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px; }
+.exp-item .exp-company { font-family:var(--font-mono);font-size:13px;color:var(--accent2);margin-bottom:12px; }
+.exp-item .exp-period { font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:12px; }
+.exp-item .exp-desc { font-size:14px;line-height:1.7;color:var(--text2); }
+.exp-placeholder { text-align:center;color:var(--muted);font-size:14px; }
 
 /* CONTACT */
 #contact {
@@ -495,18 +526,159 @@ section {
 .d1{transition-delay:0.1s}.d2{transition-delay:0.2s}.d3{transition-delay:0.3s}
 .d4{transition-delay:0.4s}.d5{transition-delay:0.5s}.d6{transition-delay:0.6s}
 
+/* LANG SWITCHER */
+.lang-switcher {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 100px; padding: 4px; flex-shrink: 0;
+}
+.lang-btn {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 100px; border: none;
+  cursor: none; background: transparent; color: var(--muted);
+  transition: all 0.25s;
+}
+.lang-btn.active {
+  background: var(--accent); color: #fff;
+}
+.lang-btn:hover:not(.active) { color: var(--text); }
+
+/* HAMBURGER */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: none; padding: 6px; background: none; border: none;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text); border-radius: 2px;
+  transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-nav {
+  display: none; position: fixed; top: 72px; left: 0; right: 0;
+  background: var(--nav-bg); backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border); z-index: 999;
+  padding: 24px; flex-direction: column; gap: 0;
+  transform: translateY(-100%); opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.mobile-nav.open { transform: translateY(0); opacity: 1; }
+.mobile-nav a {
+  font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px;
+  color: var(--muted); text-decoration: none;
+  padding: 16px 0; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  transition: color 0.3s;
+}
+.mobile-nav a span { color: var(--accent); }
+.mobile-nav a:last-child { border-bottom: none; }
+.mobile-nav a:hover { color: var(--text); }
+.mobile-nav-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 20px; margin-top: 4px;
+}
+
+/* ABOUT SECTION */
+#about {
+  min-height: auto;
+  padding: 120px 80px 80px;
+}
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  align-items: start;
+}
+.about-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px;
+  color: var(--accent2); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.about-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border); max-width: 60px;
+}
+.about-heading {
+  font-family: var(--font-display); font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800; line-height: 1.1; margin-bottom: 32px;
+}
+.about-heading em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.about-text {
+  font-size: 16px; line-height: 1.9; color: var(--text2); margin-bottom: 24px;
+}
+.about-chips {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px;
+}
+.about-chip {
+  font-family: var(--font-mono); font-size: 12px;
+  padding: 8px 16px; border-radius: 100px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); display: flex; align-items: center; gap: 8px;
+}
+.about-chip .chip-icon { font-size: 14px; }
+.about-cards {
+  display: flex; flex-direction: column; gap: 20px;
+}
+.about-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px 32px;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.about-card:hover { border-color: rgba(108,71,255,0.4); transform: translateY(-4px); }
+.about-card-icon {
+  font-size: 28px; margin-bottom: 14px;
+}
+.about-card-title {
+  font-family: var(--font-display); font-weight: 700; font-size: 18px;
+  margin-bottom: 8px;
+}
+.about-card-text {
+  font-size: 14px; color: var(--text2); line-height: 1.7;
+}
+.about-edu-row {
+  display: flex; align-items: center; gap: 16px; margin-top: 8px;
+}
+.about-edu-badge {
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 4px 12px; border-radius: 100px;
+  background: rgba(108,71,255,0.15); color: var(--accent);
+  border: 1px solid rgba(108,71,255,0.3);
+}
+.about-progress-wrap { margin-top: 14px; }
+.about-progress-label {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--muted); margin-bottom: 8px;
+}
+.about-progress-track {
+  height: 4px; background: var(--border); border-radius: 4px; overflow: hidden;
+}
+.about-progress-bar {
+  height: 100%; width: 0; border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 1.2s ease;
+}
+
 /* MOBILE */
 @media(max-width:900px){
   section{padding:100px 24px 60px;}
   #hero{grid-template-columns:1fr;}
   .hero-right{display:none;}
   nav{padding:0 20px;}
-  .nav-menu{gap:16px;}
+  .nav-menu{display:none !important;}
+  .hamburger{display:flex;}
+  .mobile-nav{display:flex;}
   .skills-layout{grid-template-columns:1fr;}
   .projects-grid{grid-template-columns:1fr;}
   .proj-featured{grid-column:span 1;grid-template-columns:1fr;}
   .proj-featured .proj-visual{display:none;}
-  .nav-right{gap:16px;}
+  .nav-right{gap:12px;}
+  .about-grid{grid-template-columns:1fr; gap:40px;}
+  #about{padding:100px 24px 60px;}
 }
 </style>
 </head>
@@ -521,42 +693,67 @@ section {
   <div class="nav-logo">TheKubanych</div>
   <div class="nav-right">
     <ul class="nav-menu">
-      <li><a href="#hero"><span>01.</span>Главная</a></li>
-      <li><a href="#skills"><span>02.</span>Навыки</a></li>
-      <li><a href="#projects"><span>03.</span>Проекты</a></li>
-      <li><a href="#contact"><span>04.</span>Контакт</a></li>
+      <li><a href="#hero"><span>01.</span><span data-i18n="nav_home">Главная</span></a></li>
+      <li><a href="#about"><span>00.</span><span data-i18n="nav_about">Обо мне</span></a></li>
+      <li><a href="#skills"><span>02.</span><span data-i18n="nav_skills">Навыки</span></a></li>
+      <li><a href="#projects"><span>03.</span><span data-i18n="nav_projects">Проекты</span></a></li>
+      <li><a href="#experience"><span>04.</span><span data-i18n="nav_exp">Опыт</span></a></li>
+      <li><a href="#contact"><span>05.</span><span data-i18n="nav_contact">Контакт</span></a></li>
     </ul>
+    <div class="lang-switcher">
+      <button class="lang-btn active" id="langRU" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
+    </div>
     <button class="theme-toggle" id="themeToggle" title="Переключить тему">
       <span class="theme-icon moon">🌙</span>
       <span class="theme-icon sun">☀️</span>
     </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#hero" onclick="closeMobileNav()"><span>01.</span><span data-i18n="nav_home">Главная</span></a>
+  <a href="#about" onclick="closeMobileNav()"><span>00.</span><span data-i18n="nav_about">Обо мне</span></a>
+  <a href="#skills" onclick="closeMobileNav()"><span>02.</span><span data-i18n="nav_skills">Навыки</span></a>
+  <a href="#projects" onclick="closeMobileNav()"><span>03.</span><span data-i18n="nav_projects">Проекты</span></a>
+  <a href="#experience" onclick="closeMobileNav()"><span>04.</span><span data-i18n="nav_exp">Опыт</span></a>
+  <a href="#contact" onclick="closeMobileNav()"><span>05.</span><span data-i18n="nav_contact">Контакт</span></a>
+  <div class="mobile-nav-bottom">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section id="hero">
   <div class="blob blob1"></div>
   <div class="blob blob2"></div>
   <div class="hero-left">
-    <div class="hero-eyebrow"><span class="eyebrow-dot"></span>BACKEND DEVELOPER · БГУ · 2 КУРС</div>
+    <div class="hero-eyebrow"><span class="eyebrow-dot"></span><span data-i18n="hero_eyebrow">BACKEND DEVELOPER · БГУ · 2 КУРС</span></div>
     <h1 class="hero-name">
       <span class="line1">The</span>
       <span class="line2">Kubanych</span>
     </h1>
     <div class="hero-role"><span class="typed" id="typed"></span><span class="blink">_</span></div>
-    <p class="hero-desc">Строю серверную часть веб-приложений. Python, API, базы данных — это моё. Студент 2-го курса БГУ, который пишет код каждый день.</p>
+    <p class="hero-desc" data-i18n="hero_desc">Строю серверную часть веб-приложений. Python, API, базы данных — это моё. Студент 2-го курса БГУ, который пишет код каждый день.</p>
     <div class="hero-stats">
-      <div class="stat"><div class="stat-num">2</div><div class="stat-label">КУРС БГУ</div></div>
-      <div class="stat"><div class="stat-num">3+</div><div class="stat-label">ПРОЕКТА</div></div>
-      <div class="stat"><div class="stat-num">∞</div><div class="stat-label">ПОТЕНЦИАЛ</div></div>
+      <div class="stat"><div class="stat-num">2</div><div class="stat-label" data-i18n="stat_year">КУРС БГУ</div></div>
+      <div class="stat"><div class="stat-num">3+</div><div class="stat-label" data-i18n="stat_projects">ПРОЕКТА</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label" data-i18n="stat_potential">ПОТЕНЦИАЛ</div></div>
     </div>
     <div class="hero-actions">
-      <a href="#contact" class="btn-mag primary">✉️ Написать мне</a>
-      <a href="#projects" class="btn-mag outline">Проекты →</a>
-      <a href="#" class="btn-mag success" id="cvBtn" download>⬇️ Скачать CV</a>
+      <a href="#contact" class="btn-mag primary" data-i18n="btn_contact">✉️ Написать мне</a>
+      <a href="#projects" class="btn-mag outline" data-i18n="btn_projects">Проекты →</a>
+      <a href="#" class="btn-mag success" id="cvBtn" download data-i18n="btn_cv">⬇️ Скачать CV</a>
     </div>
     <div class="hero-socials">
-      <span class="social-label">НАЙТИ</span>
+      <span class="social-label" data-i18n="social_find">НАЙТИ</span>
       <div class="social-line"></div>
       <a class="social-link" href="https://instagram.com/1.muxtarow" target="_blank" title="Instagram">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -593,14 +790,14 @@ section {
       <div class="photo-badge">
         <div class="badge-dot"></div>
         <div>
-          <div class="badge-text">Открыт к работе</div>
+          <div class="badge-text" data-i18n="badge_open">Открыт к работе</div>
           <div class="badge-sub">Backend · API · Python</div>
         </div>
       </div>
       <div class="photo-tag">@1.muxtarow</div>
       <div class="views-badge" id="viewsBadge" style="display:none">
         <div class="views-num" id="viewsNum">0</div>
-        <div style="font-size:9px;color:var(--muted)">👁 просмотров</div>
+        <div style="font-size:9px;color:var(--muted)" data-i18n="badge_views">👁 просмотров</div>
       </div>
     </div>
   </div>
@@ -610,49 +807,104 @@ section {
   </div>
 </section>
 
+<!-- ABOUT -->
+<section id="about">
+  <div class="blob" style="width:450px;height:450px;background:rgba(108,71,255,0.07);top:0%;right:-80px;animation-delay:-4s"></div>
+  <div class="about-grid">
+    <div class="about-left reveal-left">
+      <div class="about-label">00. <span data-i18n="about_tag">ОБО МНЕ</span></div>
+      <h2 class="about-heading"><span data-i18n="about_title_1">Привет, я</span> <em>Мухтаров</em><br><span data-i18n="about_title_2">Backend Developer</span></h2>
+      <p class="about-text" data-i18n="about_p1">Увлечён разработкой бэкенда — строю надёжные API, проектирую базы данных и разворачиваю приложения в продакшн. Каждый день пишу код и стараюсь делать сложные вещи простыми.</p>
+      <p class="about-text" data-i18n="about_p2">Учусь на 2 курсе БГУ по специальности «Информатика и вычислительная техника». Открыт к стажировкам и pet-проектам — готов работать в команде и учиться у опытных разработчиков.</p>
+      <div class="about-chips">
+        <div class="about-chip"><span class="chip-icon">🎯</span><span data-i18n="chip_goal">Стажировка / Junior Backend</span></div>
+        <div class="about-chip"><span class="chip-icon">📍</span><span data-i18n="chip_city">Бишкек, Кыргызстан</span></div>
+        <div class="about-chip"><span class="chip-icon">🌐</span><span data-i18n="chip_langs">RU / KG / EN</span></div>
+        <div class="about-chip"><span class="chip-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:16px;height:16px;vertical-align:middle" alt=""></span>Python • <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" style="width:14px;height:14px;vertical-align:middle" alt="">FastAPI • <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" style="width:14px;height:14px;vertical-align:middle;filter:invert(0.6)sepia(1)saturate(3)hue-rotate(90deg)" alt="">Django</div>
+      </div>
+    </div>
+    <div class="about-cards">
+      <div class="about-card reveal d1">
+        <div class="about-card-icon">🎓</div>
+        <div class="about-card-title" data-i18n="card_edu_title">Образование</div>
+        <div class="about-card-text" data-i18n="card_edu_text">Бишкекский Государственный Университет · Факультет информационных технологий</div>
+        <div class="about-edu-row">
+          <div class="about-edu-badge" data-i18n="card_edu_year">2 курс · 2023–2027</div>
+        </div>
+        <div class="about-progress-wrap">
+          <div class="about-progress-label">
+            <span data-i18n="card_edu_progress">Прогресс обучения</span><span>50%</span>
+          </div>
+          <div class="about-progress-track">
+            <div class="about-progress-bar" id="eduProgressBar" data-w="50"></div>
+          </div>
+        </div>
+      </div>
+      <div class="about-card reveal d2">
+        <div class="about-card-icon">💡</div>
+        <div class="about-card-title" data-i18n="card_interests_title">Интересы</div>
+        <div class="about-card-text" data-i18n="card_interests_text">Архитектура микросервисов, DevOps, Telegram-боты, автоматизация рутины. В свободное время изучаю Go и читаю про системный дизайн.</div>
+      </div>
+      <div class="about-card reveal d3">
+        <div class="about-card-icon">🚀</div>
+        <div class="about-card-title" data-i18n="card_status_title">Статус</div>
+        <div class="about-card-text" data-i18n="card_status_text">Открыт к предложениям о стажировке или part-time позиции в сфере backend разработки. Готов к удалённому формату.</div>
+        <div class="about-edu-row" style="margin-top:12px">
+          <div class="about-edu-badge" style="background:rgba(0,255,179,0.1);color:var(--accent2);border-color:rgba(0,255,179,0.3)" data-i18n="card_status_badge">✦ Открыт к работе</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- SKILLS -->
 <section id="skills">
   <div class="blob" style="width:400px;height:400px;background:rgba(0,255,179,0.06);top:10%;left:-100px;animation-delay:-2s"></div>
   <div class="sec-header reveal">
-    <div class="sec-tag">02. НАВЫКИ</div>
-    <h2 class="sec-title">Мой <em>стек</em></h2>
+    <div class="sec-tag" data-i18n="sec_skills">02. НАВЫКИ</div>
+    <h2 class="sec-title"><span data-i18n="sec_skills_title">Мой</span> <em data-i18n="sec_skills_em">стек</em></h2>
   </div>
   <div class="skills-layout">
     <div class="skills-intro reveal-left d1">
-      <p>Фокус на бэкенд разработке: строю надёжные API, работаю с базами данных и разворачиваю приложения на серверах.</p>
-      <br><p>Каждый день пишу код и изучаю новые технологии.</p>
+      <p data-i18n="skills_p1">Фокус на бэкенд разработке: строю надёжные API, работаю с базами данных и разворачиваю приложения на серверах.</p>
+      <br><p data-i18n="skills_p2">Каждый день пишу код и изучаю новые технологии.</p>
       <br><br>
       <div class="stack-chips">
-        <span class="chip">Python</span><span class="chip">FastAPI</span>
-        <span class="chip">Django</span><span class="chip">PostgreSQL</span>
-        <span class="chip">SQLite</span><span class="chip">Git</span>
-        <span class="chip">Linux</span><span class="chip">REST API</span>
-        <span class="chip">Docker</span><span class="chip">Telegram Bot</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="">Python</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="">FastAPI</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" alt="" style="filter:invert(0.6)sepia(1)saturate(3)hue-rotate(90deg)">Django</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="">PostgreSQL</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" alt="">SQLite</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="">Git</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="">Linux</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="">REST API</span>
+        <span class="chip"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="">Docker</span>
+        <span class="chip">🤖 Telegram Bot</span>
       </div>
     </div>
     <div class="skills-bars reveal-right d2">
       <div class="skill-item">
-        <div class="skill-head"><span class="skill-name">Python</span><span class="skill-pct">75%</span></div>
+        <div class="skill-head"><span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" class="skill-icon" alt="">Python</span><span class="skill-pct">75%</span></div>
         <div class="skill-track"><div class="skill-bar" data-w="75"></div></div>
       </div>
       <div class="skill-item">
-        <div class="skill-head"><span class="skill-name">REST API / FastAPI</span><span class="skill-pct">65%</span></div>
+        <div class="skill-head"><span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" class="skill-icon" alt="">REST API / FastAPI</span><span class="skill-pct">65%</span></div>
         <div class="skill-track"><div class="skill-bar" data-w="65"></div></div>
       </div>
       <div class="skill-item">
-        <div class="skill-head"><span class="skill-name">PostgreSQL</span><span class="skill-pct">60%</span></div>
+        <div class="skill-head"><span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" class="skill-icon" alt="">PostgreSQL</span><span class="skill-pct">60%</span></div>
         <div class="skill-track"><div class="skill-bar" data-w="60"></div></div>
       </div>
       <div class="skill-item">
-        <div class="skill-head"><span class="skill-name">Git / GitHub</span><span class="skill-pct">70%</span></div>
+        <div class="skill-head"><span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" class="skill-icon" alt="">Git / GitHub</span><span class="skill-pct">70%</span></div>
         <div class="skill-track"><div class="skill-bar" data-w="70"></div></div>
       </div>
       <div class="skill-item">
-        <div class="skill-head"><span class="skill-name">Linux / Terminal</span><span class="skill-pct">55%</span></div>
+        <div class="skill-head"><span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" class="skill-icon" alt="">Linux / Terminal</span><span class="skill-pct">55%</span></div>
         <div class="skill-track"><div class="skill-bar" data-w="55"></div></div>
       </div>
       <div class="skill-item">
-        <div class="skill-head"><span class="skill-name">Самообучение</span><span class="skill-pct">95%</span></div>
+        <div class="skill-head"><span class="skill-name" data-i18n="skill_selflearn">🧠 Самообучение</span><span class="skill-pct">95%</span></div>
         <div class="skill-track"><div class="skill-bar" data-w="95"></div></div>
       </div>
     </div>
@@ -663,44 +915,70 @@ section {
 <section id="projects">
   <div class="blob" style="width:450px;height:450px;background:rgba(108,71,255,0.08);bottom:0;right:-100px;animation-delay:-5s"></div>
   <div class="sec-header reveal">
-    <div class="sec-tag">03. ПРОЕКТЫ</div>
-    <h2 class="sec-title">Что я <em>создал</em></h2>
+    <div class="sec-tag" data-i18n="sec_projects">03. ПРОЕКТЫ</div>
+    <h2 class="sec-title"><span data-i18n="sec_projects_title">Что я</span> <em data-i18n="sec_projects_em">создал</em></h2>
   </div>
   <div class="projects-grid">
     <div class="proj proj-featured reveal d1">
       <div class="proj-content">
         <div class="proj-num">001 · FEATURED</div>
-        <div class="proj-title">Backend API приложение</div>
-        <div class="proj-desc">Серверная часть веб-приложения с авторизацией, БД и Swagger документацией.</div>
+        <div class="proj-title" data-i18n="proj1_title">Backend API приложение</div>
+        <div class="proj-desc" data-i18n="proj1_desc">Серверная часть веб-приложения с авторизацией, БД и Swagger документацией.</div>
         <div class="proj-stack">
-          <span class="pstack purple">Python</span>
-          <span class="pstack purple">FastAPI</span>
-          <span class="pstack green">PostgreSQL</span>
-          <span class="pstack green">В процессе</span>
+          <span class="pstack purple"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="">Python</span>
+          <span class="pstack purple"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="">FastAPI</span>
+          <span class="pstack green"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="">PostgreSQL</span>
+          <span class="pstack green" data-i18n="proj1_status">В процессе</span>
         </div>
       </div>
       <div class="proj-visual">⚙️</div>
     </div>
     <div class="proj reveal d2">
       <div class="proj-num">002</div>
-      <div class="proj-title">Telegram Bot</div>
-      <div class="proj-desc">Бот на aiogram с inline-кнопками и внешними API.</div>
+      <div class="proj-title" data-i18n="proj2_title">Telegram Bot</div>
+      <div class="proj-desc" data-i18n="proj2_desc">Бот на aiogram с inline-кнопками и внешними API.</div>
       <div class="proj-stack">
-        <span class="pstack purple">Python</span>
+        <span class="pstack purple"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="">Python</span>
         <span class="pstack green">aiogram</span>
         <span class="pstack red">Telegram API</span>
       </div>
     </div>
     <div class="proj reveal d3">
       <div class="proj-num">003</div>
-      <div class="proj-title">Студ. проекты БГУ</div>
-      <div class="proj-desc">Учебные работы по программированию. 2-й курс, активно.</div>
+      <div class="proj-title" data-i18n="proj3_title">Студ. проекты БГУ</div>
+      <div class="proj-desc" data-i18n="proj3_desc">Учебные работы по программированию. 2-й курс, активно.</div>
       <div class="proj-stack">
-        <span class="pstack purple">Python</span>
-        <span class="pstack green">Учёба</span>
-        <span class="pstack green">БГУ</span>
+        <span class="pstack purple"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="">Python</span>
+        <span class="pstack green" data-i18n="proj3_tag1">Учёба</span>
+        <span class="pstack green" data-i18n="proj3_tag2">БГУ</span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="blob" style="width:400px;height:400px;background:rgba(0,255,179,0.05);bottom:20%;right:-80px;animation-delay:-4s"></div>
+  <div class="sec-header reveal">
+    <div class="sec-tag" data-i18n="sec_exp">04. ОПЫТ</div>
+    <h2 class="sec-title"><span data-i18n="sec_exp_title">Где я</span> <em data-i18n="sec_exp_em">работаю</em></h2>
+  </div>
+  <div class="exp-timeline" id="expTimeline">
+    {% if experience %}
+    {% for e in experience %}
+    <div class="exp-item reveal d{{ forloop.counter }}">
+      {% if e.logo_url %}<img class="exp-logo" src="{{ e.logo_url }}" alt="{{ e.company }}">{% endif %}
+      <div class="exp-body">
+        <div class="exp-role">{{ e.role }}</div>
+        <div class="exp-company">{{ e.company }}</div>
+        <div class="exp-period">{{ e.period }}</div>
+        {% if e.description %}<div class="exp-desc">{{ e.description }}</div>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="exp-placeholder reveal">Загрузка...</div>
+    {% endif %}
   </div>
 </section>
 
@@ -708,47 +986,17 @@ section {
 <section id="contact">
   <div class="blob" style="width:600px;height:600px;background:rgba(108,71,255,0.07);top:50%;left:50%;transform:translate(-50%,-50%)"></div>
   <div class="contact-inner">
-    <div class="contact-eyebrow reveal">04. КОНТАКТЫ</div>
-    <h2 class="contact-title reveal d1">Давай <span>работать</span><br>вместе</h2>
-    <p class="contact-sub reveal d2">Открыт к стажировкам, проектам и просто интересному общению</p>
+    <div class="contact-eyebrow reveal" data-i18n="sec_contact">05. КОНТАКТЫ</div>
+    <h2 class="contact-title reveal d1"><span data-i18n="contact_title1">Давай</span> <span data-i18n="contact_title2"><span>работать</span></span><br><span data-i18n="contact_title3">вместе</span></h2>
+    <p class="contact-sub reveal d2" data-i18n="contact_sub">Открыт к стажировкам, проектам и просто интересному общению</p>
 
     <!-- ACTION BUTTONS -->
     <div class="contact-actions reveal d2">
-      <a href="mailto:muhtarovkubanych@gmail.com" class="btn-mag primary">✉️ Email мне</a>
-      <a href="#" class="btn-mag success" id="cvBtn2">⬇️ Скачать CV</a>
+      <a href="/cdn-cgi/l/email-protection#d2bfa7baa6b3a0bda4b9a7b0b3bcabb1ba92b5bfb3bbbefcb1bdbf" class="btn-mag primary">✉️ Email мне</a>
+      <a href="#" class="btn-mag success" id="cvBtn2" data-i18n="btn_cv">⬇️ Скачать CV</a>
     </div>
 
-    <!-- TELEGRAM AUTH FORM -->
-    <div class="tg-auth-wrap reveal d3" id="tgAuthWrap">
-      <div id="tgLoginStep">
-        <p style="font-family:var(--font-mono);font-size:13px;color:var(--muted);margin-bottom:20px">Войди через Telegram чтобы написать мне</p>
-        <div id="tgWidgetContainer"></div>
-        <p style="font-size:12px;color:var(--muted);margin-top:14px;font-family:var(--font-mono)">Данные используются только для идентификации</p>
-      </div>
-      <div id="tgFormStep" style="display:none;width:100%">
-        <div class="tg-user-badge" id="tgUserBadge"></div>
-        <form class="contact-form" id="contactForm">
-          <div class="cf-field">
-            <label>Тема</label>
-            <input type="text" name="subject" placeholder="О чём хочешь написать?" required>
-          </div>
-          <div class="cf-field">
-            <label>Сообщение</label>
-            <textarea name="message" rows="4" placeholder="Напиши своё сообщение..." required></textarea>
-          </div>
-          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-            <button type="submit" class="cf-btn" id="cfBtn">
-              <span id="cfBtnText">Отправить →</span>
-              <span id="cfBtnLoader" style="display:none">⏳ Отправляю...</span>
-            </button>
-            <button type="button" class="cf-btn" id="cfLogout" style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none">Выйти</button>
-          </div>
-          <div id="cfResult"></div>
-        </form>
-      </div>
-    </div>
-
-    <div class="contact-divider reveal d4"><span>или напиши напрямую</span></div>
+    <div class="contact-divider reveal d3"><span data-i18n="contact_divider">напиши напрямую</span></div>
 
     <!-- CONTACT CARDS -->
     <div class="contact-cards">
@@ -809,11 +1057,11 @@ section {
       </div>
     </div>
 
-    <div class="contact-footer reveal d6">© 2025 TheKubanych · Backend Developer · БГУ</div>
+    <div class="contact-footer reveal d6" data-i18n="footer">© 2025 TheKubanych · Backend Developer · БГУ</div>
   </div>
 </section>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── CURSOR ──
 const cur = document.getElementById('cur');
 const ring = document.getElementById('curRing');
@@ -890,11 +1138,15 @@ drawParticles();
 window.addEventListener('resize',initParticles);
 
 // ── TYPED ──
-const roles=['Backend Developer','Python Разработчик','API Builder','Django Dev','БГУ · 2 Курс'];
+let currentLang = localStorage.getItem('lang') || 'ru';
+
+const rolesRU=['Backend Developer','Python Разработчик','API Builder','Django Dev','БГУ · 2 Курс'];
+const rolesEN=['Backend Developer','Python Developer','API Builder','Django Dev','BSU · Year 2'];
 let ri=0,ci=0,del=false;
 const tel=document.getElementById('typed');
 function type(){
-  const r=roles[ri];
+  const roles = currentLang==='en' ? rolesEN : rolesRU;
+  const r=roles[ri%roles.length];
   if(!del){tel.textContent=r.slice(0,++ci);if(ci===r.length){del=true;setTimeout(type,2000);return;}}
   else{tel.textContent=r.slice(0,--ci);if(ci===0){del=false;ri=(ri+1)%roles.length;}}
   setTimeout(type,del?50:90);
@@ -946,7 +1198,7 @@ new IntersectionObserver(entries=>{
     }
   });
 },{threshold:0.5}).observe(document.getElementById('hero'));
-['skills','projects','contact'].forEach(id=>{
+['skills','projects','experience','contact'].forEach(id=>{
   const el=document.getElementById(id);
   if(el) new IntersectionObserver(entries=>{
     entries.forEach(e=>{
@@ -997,6 +1249,44 @@ async function loadProjects(){
   }catch(e){}
 }
 
+async function loadExperience(){
+  const container=document.getElementById('expTimeline');
+  if(!container)return;
+  if(container.querySelector('.exp-item'))return;
+  try{
+    const res=await fetch(`${API_URL}/experience/`);
+    if(!res.ok)return;
+    const items=await res.json();
+    if(!items.length){container.innerHTML='<div class="exp-placeholder reveal">Пока пусто</div>';return;}
+    container.innerHTML=items.map((e,i)=>`
+      <div class="exp-item reveal d${i+1}">
+        ${e.logo_url?`<img class="exp-logo" src="${e.logo_url}" alt="${e.company}">`:''}
+        <div class="exp-body">
+          <div class="exp-role">${e.role}</div>
+          <div class="exp-company">${e.company}</div>
+          <div class="exp-period">${e.period}</div>
+          ${e.description?`<div class="exp-desc">${e.description}</div>`:''}
+        </div>
+      </div>`).join('');
+    container.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  }catch(e){document.getElementById('expTimeline').innerHTML='<div class="exp-placeholder">Не удалось загрузить</div>';}
+}
+
+function setupCvButtons(){
+  const btns=document.querySelectorAll('#cvBtn,#cvBtn2');
+  btns.forEach(btn=>{
+    btn.addEventListener('click',async(e)=>{
+      e.preventDefault();
+      try{
+        const res=await fetch(`${API_URL}/cv/`);
+        const json=await res.json();
+        if(res.ok&&json.url)window.open(json.url,'_blank');
+        else alert('CV пока не загружено. Добавь файл в админке.');
+      }catch{alert('Не удалось загрузить CV');}
+    });
+  });
+}
+
 async function loadStats(){
   try{
     const res=await fetch(`${API_URL}/stats/`);
@@ -1005,76 +1295,172 @@ async function loadStats(){
     if(data.total_views>0){
       const badge=document.getElementById('viewsBadge');
       const num=document.getElementById('viewsNum');
-      if(badge&&num){badge.style.display='flex';num.textContent=data.total_views;}
+      if(badge&&num){badge.style.display='flex';num.textContent=data.total_views.toLocaleString();}
     }
   }catch(e){}
 }
 
-// ── TELEGRAM AUTH ──
-let tgCurrentUser=null;
-function initTelegramWidget(){
-  const container=document.getElementById('tgWidgetContainer');
-  if(!container)return;
-  const botName='mytelenewbot';
-  const script=document.createElement('script');
-  script.src='https://telegram.org/js/telegram-widget.js?22';
-  script.setAttribute('data-telegram-login',botName);
-  script.setAttribute('data-size','large');
-  script.setAttribute('data-radius','12');
-  script.setAttribute('data-onauth','onTelegramAuth(user)');
-  script.setAttribute('data-request-access','write');
-  script.async=true;
-  container.appendChild(script);
+// ── MOBILE MENU ──
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+function closeMobileNav(){
+  hamburger.classList.remove('open');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow='';
 }
-window.onTelegramAuth=async function(user){
-  try{
-    const res=await fetch(`${API_URL}/auth/telegram/`,{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(user)
-    });
-    const json=await res.json();
-    if(res.ok&&json.success){tgCurrentUser=json.user;showForm(json.user);}
-    else alert('Ошибка: '+(json.error||'попробуй снова'));
-  }catch(e){
-    tgCurrentUser={id:user.id,name:user.first_name+(user.last_name?' '+user.last_name:''),username:user.username||'',photo_url:user.photo_url||''};
-    showForm(tgCurrentUser);
+hamburger.addEventListener('click',()=>{
+  const isOpen = hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+// close on outside click
+document.addEventListener('click',e=>{
+  if(!mobileNav.contains(e.target)&&!hamburger.contains(e.target)){closeMobileNav();}
+});
+
+// ── ABOUT PROGRESS BAR ──
+new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const bar=document.getElementById('eduProgressBar');
+      if(bar) bar.style.width=bar.dataset.w+'%';
+    }
+  });
+},{threshold:0.3}).observe(document.getElementById('about'));
+
+// ── I18N ──
+const TRANSLATIONS = {
+  ru: {
+    // nav
+    nav_home:'Главная', nav_about:'Обо мне', nav_skills:'Навыки',
+    nav_projects:'Проекты', nav_exp:'Опыт', nav_contact:'Контакт',
+    // hero
+    hero_eyebrow:'BACKEND DEVELOPER · БГУ · 2 КУРС',
+    hero_desc:'Строю серверную часть веб-приложений. Python, API, базы данных — это моё. Студент 2-го курса БГУ, который пишет код каждый день.',
+    stat_year:'КУРС БГУ', stat_projects:'ПРОЕКТА', stat_potential:'ПОТЕНЦИАЛ',
+    btn_projects:'Проекты →', social_find:'НАЙТИ', badge_open:'Открыт к работе',
+    // about
+    about_tag:'ОБО МНЕ',
+    about_title_1:'Привет, я', about_title_2:'Backend Developer',
+    about_p1:'Увлечён разработкой бэкенда — строю надёжные API, проектирую базы данных и разворачиваю приложения в продакшн. Каждый день пишу код и стараюсь делать сложные вещи простыми.',
+    about_p2:'Учусь на 2 курсе БГУ по специальности «Информатика и вычислительная техника». Открыт к стажировкам и pet-проектам — готов работать в команде и учиться у опытных разработчиков.',
+    chip_goal:'Стажировка / Junior Backend', chip_langs:'RU / KG / EN',
+    card_edu_title:'Образование',
+    card_edu_text:'Бишкекский Государственный Университет · Факультет информационных технологий',
+    card_edu_year:'2 курс · 2023–2027', card_edu_progress:'Прогресс обучения',
+    card_interests_title:'Интересы',
+    card_interests_text:'Архитектура микросервисов, DevOps, Telegram-боты, автоматизация рутины. В свободное время изучаю Go и читаю про системный дизайн.',
+    card_status_title:'Статус',
+    card_status_text:'Открыт к предложениям о стажировке или part-time позиции в сфере backend разработки. Готов к удалённому формату.',
+    card_status_badge:'✦ Открыт к работе',
+    // skills
+    sec_skills:'02. НАВЫКИ', sec_skills_title:'Мой', sec_skills_em:'стек',
+    skills_p1:'Фокус на бэкенд разработке: строю надёжные API, работаю с базами данных и разворачиваю приложения на серверах.',
+    skills_p2:'Каждый день пишу код и изучаю новые технологии.',
+    // projects
+    sec_projects:'03. ПРОЕКТЫ', sec_projects_title:'Что я', sec_projects_em:'создал',
+    proj1_title:'Backend API приложение',
+    proj1_desc:'Серверная часть веб-приложения с авторизацией, БД и Swagger документацией.',
+    proj1_status:'В процессе',
+    proj2_title:'Telegram Bot',
+    proj2_desc:'Бот на aiogram с inline-кнопками и внешними API.',
+    proj3_title:'Студ. проекты БГУ',
+    proj3_desc:'Учебные работы по программированию. 2-й курс, активно.',
+    proj3_tag1:'Учёба',
+    // experience
+    sec_exp:'04. ОПЫТ', sec_exp_title:'Где я', sec_exp_em:'работаю',
+    // contact
+    sec_contact:'05. КОНТАКТЫ',
+    contact_title1:'Давай', contact_title2:'<span>работать</span>', contact_title3:'вместе',
+    contact_sub:'Открыт к стажировкам, проектам и просто интересному общению',
+    contact_divider:'напиши напрямую',
+    footer:'© 2025 TheKubanych · Backend Developer · БГУ',
+    // misc
+    btn_contact:'✉️ Написать мне', btn_cv:'⬇️ Скачать CV',
+    badge_views:'👁 просмотров', skill_selflearn:'🧠 Самообучение',
+    chip_city:'Бишкек, Кыргызстан', proj3_tag2:'БГУ',
+  },
+  en: {
+    // nav
+    nav_home:'Home', nav_about:'About', nav_skills:'Skills',
+    nav_projects:'Projects', nav_exp:'Experience', nav_contact:'Contact',
+    // hero
+    hero_eyebrow:'BACKEND DEVELOPER · BSU · YEAR 2',
+    hero_desc:"I build the server side of web applications. Python, APIs, databases — that's my thing. 2nd year BSU student writing code every day.",
+    stat_year:'BSU YEAR', stat_projects:'PROJECTS', stat_potential:'POTENTIAL',
+    btn_projects:'Projects →', social_find:'FIND ME', badge_open:'Open to work',
+    // about
+    about_tag:'ABOUT ME',
+    about_title_1:"Hi, I'm", about_title_2:'Backend Developer',
+    about_p1:"I'm passionate about backend development — building reliable APIs, designing databases, and deploying apps to production. I write code every day and love turning complex problems into simple solutions.",
+    about_p2:"I'm a 2nd-year student at Bishkek State University, majoring in Computer Science. Open to internships and side projects — ready to work in a team and learn from experienced developers.",
+    chip_goal:'Internship / Junior Backend', chip_langs:'RU / KG / EN',
+    card_edu_title:'Education',
+    card_edu_text:'Bishkek State University · Faculty of Information Technology',
+    card_edu_year:'Year 2 · 2023–2027', card_edu_progress:'Study progress',
+    card_interests_title:'Interests',
+    card_interests_text:'Microservice architecture, DevOps, Telegram bots, automation. In my spare time I explore Go and study system design.',
+    card_status_title:'Status',
+    card_status_text:'Open to internship or part-time backend developer positions. Remote-friendly.',
+    card_status_badge:'✦ Open to Work',
+    // skills
+    sec_skills:'02. SKILLS', sec_skills_title:'My', sec_skills_em:'stack',
+    skills_p1:'Focused on backend development: building reliable APIs, working with databases, and deploying apps to servers.',
+    skills_p2:'I write code every day and learn new technologies.',
+    // projects
+    sec_projects:'03. PROJECTS', sec_projects_title:'What I', sec_projects_em:"built",
+    proj1_title:'Backend API Application',
+    proj1_desc:'Server-side web app with authentication, database integration and Swagger docs.',
+    proj1_status:'In progress',
+    proj2_title:'Telegram Bot',
+    proj2_desc:'Bot built with aiogram featuring inline buttons and external API integrations.',
+    proj3_title:'BSU Study Projects',
+    proj3_desc:'Academic programming assignments. 2nd year, actively working.',
+    proj3_tag1:'Study',
+    // experience
+    sec_exp:'04. EXPERIENCE', sec_exp_title:'Where I', sec_exp_em:'work',
+    // contact
+    sec_contact:'05. CONTACT',
+    contact_title1:"Let's", contact_title2:'<span>work</span>', contact_title3:'together',
+    contact_sub:'Open to internships, projects, and interesting conversations',
+    contact_divider:'reach out directly',
+    footer:'© 2025 TheKubanych · Backend Developer · BSU',
+    // misc
+    btn_contact:'✉️ Contact me', btn_cv:'⬇️ Download CV',
+    badge_views:'👁 views', skill_selflearn:'🧠 Self-learning',
+    chip_city:'Bishkek, Kyrgyzstan', proj3_tag2:'BSU',
   }
 };
-function showForm(user){
-  document.getElementById('tgLoginStep').style.display='none';
-  document.getElementById('tgFormStep').style.display='block';
-  const badge=document.getElementById('tgUserBadge');
-  const av=user.photo_url?`<img src="${user.photo_url}" alt="${user.name}">`:`<div class="tg-avatar-placeholder">${user.name[0]}</div>`;
-  badge.innerHTML=`${av}<div class="tg-info"><div class="tg-name">${user.name}</div><div class="tg-handle">${user.username?'@'+user.username:'Telegram'}</div></div>
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#2CA5E0"/><path d="M6.5 11.8l11-4.2-4 11-3-4-2.7 2 .3-4z" fill="white"/></svg>`;
+
+function setLang(lang){
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  const t = TRANSLATIONS[lang];
+  // keys whose values contain HTML (use innerHTML)
+  const htmlKeys = new Set(['contact_title2']);
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(t[key] !== undefined){
+      if(htmlKeys.has(key)) el.innerHTML = t[key];
+      else el.textContent = t[key];
+    }
+  });
+  // update lang btn active states
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.textContent.trim().toLowerCase()===lang);
+  });
+  // scroll cue text
+  const scrollText = document.querySelector('.scroll-text');
+  if(scrollText) scrollText.textContent = lang==='en' ? 'SCROLL DOWN' : 'СКРОЛЛ ВНИЗ';
 }
-document.getElementById('cfLogout')?.addEventListener('click',()=>{
-  tgCurrentUser=null;
-  document.getElementById('tgLoginStep').style.display='block';
-  document.getElementById('tgFormStep').style.display='none';
-  document.getElementById('contactForm')?.reset();
-});
-document.getElementById('contactForm')?.addEventListener('submit',async(e)=>{
-  e.preventDefault();
-  const btn=document.getElementById('cfBtn');
-  const btnText=document.getElementById('cfBtnText');
-  const btnLoader=document.getElementById('cfBtnLoader');
-  const result=document.getElementById('cfResult');
-  btn.disabled=true;btnText.style.display='none';btnLoader.style.display='inline';result.style.display='none';
-  const data=Object.fromEntries(new FormData(e.target).entries());
-  if(tgCurrentUser){data.name=tgCurrentUser.name;data.telegram_user_id=tgCurrentUser.id;}
-  try{
-    const res=await fetch(`${API_URL}/contact/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-    const json=await res.json();
-    if(res.ok){result.className='success';result.textContent='✅ '+(json.message||'Отправлено!');e.target.reset();}
-    else{result.className='error';result.textContent='❌ '+Object.values(json).flat().join(', ');}
-  }catch(err){result.className='error';result.textContent='❌ Сервер недоступен. Напиши в Telegram!';}
-  result.style.display='block';btn.disabled=false;btnText.style.display='inline';btnLoader.style.display='none';
-});
-initTelegramWidget();
-loadSkills();loadProjects();loadStats();
+// apply saved lang on load
+setLang(currentLang);
+
+loadSkills();
+loadProjects();
+loadExperience();
+setupCvButtons();
+loadStats();
 </script>
 </body>
 </html>
-
-
-data-telegram-login="wwdexterbot"

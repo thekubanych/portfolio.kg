@@ -69,5 +69,8 @@ git push -u origin main
 |-------|-----|----------|
 | GET | /api/skills/ | Навыки |
 | GET | /api/projects/ | Проекты |
+| GET | /api/experience/ | Опыт работы |
+| GET | /api/cv/ | Ссылка на резюме |
 | POST | /api/contact/ | Форма контакта |
+| POST | /api/auth/telegram/ | Telegram Login |
 | GET | /api/stats/ | Статистика |
